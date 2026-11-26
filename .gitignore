@@ -13,11 +13,15 @@ outputs/**/.cache.json
 outputs/final/_build_tmp/
 outputs/final/_radio_tmp/
 outputs/benchmarks/_tmp/
+outputs/benchmarks/**/_build_tmp/
 
 # Generated outputs (large media files)
 outputs/narration/*.wav
 outputs/narration/*.mp3
 outputs/benchmarks/**/*.wav
+outputs/benchmarks/**/*.mp4
+outputs/benchmarks/**/*.srt
+outputs/benchmarks/**/*.png
 outputs/benchmarks/*.mp4
 outputs/benchmarks/*.png
 outputs/keyframes/*.png

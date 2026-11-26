@@ -140,19 +140,29 @@ def generate_srt(timeline, srt_path, max_chars=40):
     return idx - 1
 
 
-def assemble_film():
+def assemble_film(
+    storyboard=None,
+    narr_dir=None,
+    final_dir=None,
+    filename_prefix="film",
+    log_stage="assembly",
+    log_extra=None,
+):
     ffmpeg_bin, _ = ensure_ffmpeg_in_path()
     if not ffmpeg_bin:
         print("FAIL FFmpeg not found.")
         sys.exit(1)
 
     t0 = time.time()
-    storyboard = load_storyboard()
+    if storyboard is None:
+        storyboard = load_storyboard()
 
     shots_dir = os.path.join(PROJECT_ROOT, "outputs", "shots")
-    narr_dir = os.path.join(PROJECT_ROOT, "outputs", "narration")
+    if narr_dir is None:
+        narr_dir = os.path.join(PROJECT_ROOT, "outputs", "narration")
     music_dir = os.path.join(PROJECT_ROOT, "outputs", "music")
-    final_dir = os.path.join(PROJECT_ROOT, "outputs", "final")
+    if final_dir is None:
+        final_dir = os.path.join(PROJECT_ROOT, "outputs", "final")
     tmp_dir = os.path.join(final_dir, "_build_tmp")
     os.makedirs(tmp_dir, exist_ok=True)
 
@@ -346,7 +356,7 @@ def assemble_film():
             sys.exit(1)
 
     # Export 16:9 with burned-in subtitles (relative subtitle path avoids Windows C: drive escaping bugs)
-    out_16_9 = os.path.join(final_dir, "film_16x9.mp4")
+    out_16_9 = os.path.join(final_dir, f"{filename_prefix}_16x9.mp4")
     print("  Exporting 16:9 MP4 with burned-in subtitles...")
     res = subprocess.run(
         [
@@ -368,7 +378,7 @@ def assemble_film():
     create_end_card_image(storyboard, ec_9_16_png, W_9_16, H_9_16)
     ec_start = timeline[-1]["start"] if timeline[-1]["is_end_card"] else total_duration
 
-    out_9_16 = os.path.join(final_dir, "film_9x16.mp4")
+    out_9_16 = os.path.join(final_dir, f"{filename_prefix}_9x16.mp4")
     print("  Exporting 9:16 vertical MP4 with safe-area subtitles & fitted vertical end card...")
     ec_dur = timeline[-1]["duration"]
     vf_9_16 = (
@@ -400,8 +410,9 @@ def assemble_film():
     dur_16 = get_video_duration(out_16_9)
     dur_9 = get_video_duration(out_9_16)
 
-    log_call({
-        "stage": "assembly",
+    rel_dir = os.path.relpath(final_dir, PROJECT_ROOT).replace("\\", "/")
+    log_payload = {
+        "stage": log_stage,
         "provider": "local",
         "model": "ffmpeg",
         "parameters": {
@@ -411,14 +422,17 @@ def assemble_film():
             "ducking": "threshold=0.02,ratio=6,attack=300,release=1500" if has_score else "none",
         },
         "seed": None,
-        "output_16x9": "outputs/final/film_16x9.mp4",
-        "output_9x16": "outputs/final/film_9x16.mp4",
+        "output_16x9": f"{rel_dir}/{filename_prefix}_16x9.mp4",
+        "output_9x16": f"{rel_dir}/{filename_prefix}_9x16.mp4",
         "duration_16x9": round(dur_16, 2),
         "duration_9x16": round(dur_9, 2),
         "latency_seconds": latency,
         "cost_estimate": "free (local FFmpeg)",
         "status": "success",
-    })
+    }
+    if log_extra:
+        log_payload.update(log_extra)
+    log_call(log_payload)
 
     print("=" * 60)
     print("OK   Assembly complete!")
