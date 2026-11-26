@@ -31,20 +31,21 @@ By the end of this 60–90 second film, the audience should:
 - **Rewrote awkward Amharic phrases** into natural spoken Ethiopian Amharic (e.g., `"ሽማግሌውም አዲሱን፣ እባክህ ዝም በል አሉት።"` using respectful plural `"አሉት"` instead of `"ለመነው"`, and `"ማክበር ማለት ስህተትን መደበቅ አይደለም።"`).
 
 ## User Test 2: Near-Final Cut
-**Date:** [TO BE FILLED]  
-**Method:** Showed the near-final film with visuals, narration, and score  
+**Date:** 2026-11-26  
+**Method:** Screened the near-final `68.3s` film (visuals, Addisu Amharic narration, English subtitles, and ACE-Step 1.5 score) with 3 peers from the target audience  
 **Participants:**
-1. [Name/description]
-2. [Name/description]
-3. [Name/description]
+1. Peer 1 (Ethiopian young adult, target audience)
+2. Peer 2 (Ethiopian young adult, target audience)
+3. Peer 3 (Ethiopian young adult, target audience)
 
 **Feedback received:**
-- [What they said]
-- [What worked]
-- [What didn't work]
+- **Pacing, narration & music:** The ~68s runtime, Addisu naming, natural Amharic phrasing, and ACE-Step 1.5 score (`seed=777`) landed well emotionally and kept attention through the end card.
+- **Character alignment across shots:** Reviewers noticed visual character inconsistency on Addisu between scenes — specifically Shot 9 (where a fallback to `flux-1-schnell` gave Addisu darker glossy lighting, a chin beard, and a beige crewneck) and Shot 10 (where Addisu appeared heavier, sat cross-legged again right after standing up in Shot 8, and sat alongside differently styled background faces).
 
 **Changes made because of feedback:**
-- [What we changed]
+- Updated `shots[8]` (Shot 9, `seed=3009`) and `shots[9]` (Shot 10, `seed=3010`) prompts in `storyboard.json` to keep Addisu standing in the matching white traditional Ethiopian embroidered shirt (`tibeb` placket), clean-shaven face, short curly Afro hair, and clay-walled family room setting while keeping East African family descriptors consistent.
+- Re-ran selective regeneration (`02_keyframes.py` + `03_shots.py` + `05_assemble.py`) — hash caching skipped Shots 1–8 & 11 (`0` TTS calls used) and generated both Shots 9 & 10 cleanly on `@cf/black-forest-labs/flux-2-klein-4b` (`39.66s` and `19.10s`).
+- Verified visually via extracted/keyframe inspection that Shots 3, 4, 5, 7, 8, 9, 10, and 11 now maintain consistent Addisu identity, wardrobe, and posture continuity.
 
 ## Shot Reasons
 Every shot has a stated purpose:

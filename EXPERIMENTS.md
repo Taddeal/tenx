@@ -48,7 +48,7 @@ Each entry records: hypothesis → change → result.
   - `seed=42`: `43.29s`
   - `seed=123`: `41.11s`
   - `seed=777`: `41.91s`
-- **Result:** All 3 seeds succeeded (`126.31s` total generation across 3 tracks). Selected **`seed=42`** (`score_seed_42.wav` → `outputs/music/score.wav`) after auditioning candidates for the final mix *(note final subjective musical comparison note before submission if desired)*.
+- **Result:** All 3 seeds succeeded (`126.31s` total generation across 3 tracks). Selected **`seed=777`** (`score_seed_777.wav` → `outputs/music/score.wav`) after auditioning all three candidates under narration — its melody felt catchy and fitted the emotional progression of Addisu's story best without competing with the Amharic voiceover.
 
 ## Experiment 10: Hash-Based Selective Regeneration
 - **Hypothesis:** Hashing `(prompt + style + character_descriptions + seed)` per shot in `.cache.json` enables single-shot regeneration in <20s without touching unaffected shots.
