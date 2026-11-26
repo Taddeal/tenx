@@ -69,6 +69,7 @@
           "reason": { "type": "string", "description": "Why this shot exists in the story" },
           "camera": { "type": "string", "description": "Camera movement description" },
           "seed": { "type": "integer", "minimum": 0, "description": "Deterministic generation seed" },
+          "reference_shot_id": { "type": "integer", "minimum": 1, "description": "Optional single-subject golden reference shot ID" },
           "is_end_card": { "type": "boolean" },
           "transition": { "type": "string", "enum": ["cut", "crossfade", "fade_to_black", "dissolve"], "default": "cut" },
           "music_cue": { "type": "string", "description": "What the music should do at this point" }

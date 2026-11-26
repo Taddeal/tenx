@@ -58,8 +58,11 @@ If a Wan 2.2 clip (typically 5s) is shorter than `effective_duration`, `05_assem
 ### 2. Upscaled Ken Burns (Anti-Shimmer)
 FFmpeg's `zoompan` filter rounds pan coordinates to integer pixels on native 720p frames, producing visible jitter. `03_shots.py` upscales input keyframes 3× (`3840×2160`) using Lanczos before `zoompan`, then scales back to `1280×720` at 24 fps.
 
-### 3. Prompt-Conditioned Keyframes with Automatic Fallback (and Opt-In Reference)
-`02_keyframes.py` first generates `outputs/references/character_sheet.png` for look development, then generates `1280×720` keyframes via `@cf/black-forest-labs/flux-2-klein-4b` using deterministic seeds, fixed `East African Ethiopian` character descriptors, and unified `style.block` (`CF_ENABLE_IMAGE_REF=0` by default after Experiment 4 showed `input_image_0` copied all 4 lineup characters into 1–2 person shots; set `CF_ENABLE_IMAGE_REF=1` to opt into multipart reference conditioning). If `flux-2-klein-4b` fails or flags `code 3030`, it falls back cleanly to `seed+100` (`flux2-txt-altseed`) and then `@cf/black-forest-labs/flux-1-schnell` without passing `seed`.
+### 3. Single-Subject Golden Reference (`reference_shot_id`) & Automatic Fallback
+`02_keyframes.py` separates look-development from per-shot identity locking:
+- Multi-person ensemble scenes (`01, 02, 04, 05, 06`) and hero Shot `03` default to text-to-image (`flux2-txt`, `CF_ENABLE_IMAGE_REF=0`) after Experiment 4 showed passing the 4-person `character_sheet.png` cloned extra lineup figures into scenes.
+- Shots with `"reference_shot_id": 3` (`07–11`) pass `outputs/keyframes/shot_03.png` (and hash its SHA-256 bytes into the cache key) to `@cf/black-forest-labs/flux-2-klein-4b` via `input_image_0`, locking Addisu's exact face, hairline, and embroidered tunic across scenes.
+- Fallback order handles false-positive `code 3030` flags and schema differences cleanly: `flux2-ref` → `flux2-ref-altseed` (`seed+100`) → `flux2-txt` → `flux2-txt-altseed` (`seed+100`) → `@cf/black-forest-labs/flux-1-schnell` (without `seed`).
 
 ### 4. Windows Path & Ethiopic Font Safety
 - `pipeline/utils.py` automatically inspects Windows User PATH (`HKCU\Environment`) and WinGet package directories if `ffmpeg`/`ffprobe` are not yet in the active shell PATH.

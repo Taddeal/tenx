@@ -124,6 +124,7 @@ def generate_with_fallback(account_id, api_token, prompt, seed, ref_path, stage_
     attempts = []
     if ref_enabled and ref_path and os.path.exists(ref_path):
         attempts.append(("flux2-ref", lambda: call_flux2_klein(account_id, api_token, prompt, seed, TARGET_W, TARGET_H, ref_path)))
+        attempts.append(("flux2-ref-altseed", lambda: call_flux2_klein(account_id, api_token, prompt, seed + 100, TARGET_W, TARGET_H, ref_path)))
     attempts.append(("flux2-txt", lambda: call_flux2_klein(account_id, api_token, prompt, seed, TARGET_W, TARGET_H, None)))
     attempts.append(("flux2-txt-altseed", lambda: call_flux2_klein(account_id, api_token, prompt, seed + 100, TARGET_W, TARGET_H, None)))
     attempts.append(("flux1-schnell", lambda: call_flux1_schnell(account_id, api_token, prompt, steps=4)))
@@ -147,7 +148,7 @@ def generate_with_fallback(account_id, api_token, prompt, seed, ref_path, stage_
                     "width": TARGET_W,
                     "height": TARGET_H,
                     "steps": 4,
-                    "referenced_sheet": bool(mode_name == "flux2-ref"),
+                    "referenced_sheet": bool(mode_name.startswith("flux2-ref")),
                 },
                 "seed": seed,
                 "prompt": prompt[:220],
@@ -246,19 +247,32 @@ def generate_keyframes():
             continue
 
         chars_in_shot = shot.get("characters_in_shot", [])
-        char_descs = [
-            f"{char_map[cid]['name']} ({char_map[cid]['description']})"
-            for cid in chars_in_shot if cid in char_map
-        ]
+        ref_shot_id = shot.get("reference_shot_id")
+        ref_shot_path = os.path.join(kf_dir, f"shot_{int(ref_shot_id):02d}.png") if ref_shot_id else None
+        use_golden_ref = bool(ref_shot_path and os.path.exists(ref_shot_path))
 
         full_prompt = shot["image_prompt"]
-        if char_descs:
-            full_prompt += ". Characters matching reference sheet: " + "; ".join(char_descs)
-        full_prompt += f". Style: {style_block}"
+        if use_golden_ref:
+            full_prompt += ". Style: " + style_block
+            use_ref = ref_shot_path
+            with open(ref_shot_path, "rb") as rf:
+                import hashlib
+                ref_token = f"shot_{int(ref_shot_id):02d}_" + hashlib.sha256(rf.read()).hexdigest()[:12]
+            shot_ref_enabled = True
+        else:
+            char_descs = [
+                f"{char_map[cid]['name']} ({char_map[cid]['description']})"
+                for cid in chars_in_shot if cid in char_map
+            ]
+            if char_descs:
+                full_prompt += ". Characters matching reference sheet: " + "; ".join(char_descs)
+            full_prompt += f". Style: {style_block}"
+            use_ref = ref_path if (chars_in_shot and ref_enabled) else None
+            ref_token = ref_hash if use_ref else "txt_mode"
+            shot_ref_enabled = ref_enabled
 
         seed = int(shot.get("seed", 1000 + sid))
-        use_ref = ref_path if (chars_in_shot and ref_enabled) else None
-        p_hash = stable_hash(full_prompt, seed, ref_hash if use_ref else "txt_mode")
+        p_hash = stable_hash(full_prompt, seed, ref_token)
         out_path = os.path.join(kf_dir, f"shot_{sid:02d}.png")
         cache_key = f"shot_{sid}"
 
@@ -267,13 +281,13 @@ def generate_keyframes():
             cached += 1
             continue
 
-        print(f"  Shot {sid:02d}: Generating keyframe (seed={seed}, ref={bool(use_ref and ref_enabled)})...")
+        print(f"  Shot {sid:02d}: Generating keyframe (seed={seed}, ref={bool(use_ref and shot_ref_enabled)})...")
         try:
             model_used, mode_name, latency, size, ref_waf_blocked = generate_with_fallback(
                 account_id, api_token, full_prompt, seed, use_ref,
-                stage_label="keyframes", shot_id=sid, out_path=out_path, ref_enabled=ref_enabled,
+                stage_label="keyframes", shot_id=sid, out_path=out_path, ref_enabled=shot_ref_enabled,
             )
-            if ref_waf_blocked:
+            if ref_waf_blocked and not use_golden_ref:
                 ref_enabled = False
             kf_cache[cache_key] = p_hash
             save_cache(kf_cache_path, kf_cache)
