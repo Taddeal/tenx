@@ -12,6 +12,8 @@ Measured latency, GPU minutes, and list-price equivalent cost per pipeline stage
 | Smoke Test | `@cf/black-forest-labs/flux-1-schnell` | 1 | 1 | 4.52s | 4.52s | 1024×1024 fallback probe | \$0 (Free tier) |
 | Narration | `gemini-3.8-flash-tts` | 16 | 1 | 11.10s | 177.63s | `116.19s` audio across v1 + v2 (`429` hit at 10 RPD) | \$0 (Free tier) |
 | Narration (Fallback) | `gemini-3.8-flash-lite-tts` | 5 | 0 | 6.95s | 34.73s | `26.66s` audio (`Schedar` fallback on Shots 6, 7, 9, 10, 11) | \$0 (Free tier) |
+| Multi-Lang Benchmark (`om`/`ti`) | `gemini-3.8-flash-tts` | 4 | 1 | 6.26s | 25.03s | `22.18s` audio (`om` Beats 2,6,11 + `ti` Beat 2; hit `3 RPM` `429`) | \$0 (Free tier) |
+| Multi-Lang Fallback (`ti`) | `gemini-3.8-flash-lite-tts` | 2 | 0 | 5.38s | 10.75s | `10.87s` audio (`ti` Beats 6 & 11 after `3 RPM` cap) | \$0 (Free tier) |
 | Radio Cut | Local FFmpeg + Pillow | 2 | 0 | 9.71s | 19.41s | `radio_cut.mp4` (latest Addisu cut: `68.2s`) | \$0 (Local) |
 | Reference Sheet | `@cf/black-forest-labs/flux-2-klein-4b` | 2 | 0 | 18.71s | 37.42s | `outputs/references/character_sheet.png` | \$0 (Free tier) |
 | Keyframes (Primary) | `@cf/black-forest-labs/flux-2-klein-4b` | 37 | 20 | 16.91s | 625.62s | v1 + Addisu + User Test 2 Shot 9/10 alignment `1280×720` PNGs | \$0 (Free tier) |
@@ -25,7 +27,7 @@ Measured latency, GPU minutes, and list-price equivalent cost per pipeline stage
 
 | Service | Documented / Observed Limit | Actual Usage | Notes |
 |---------|-----------------------------|--------------|-------|
-| Gemini TTS (`gemini-3.8-flash-tts`) | **10 requests/day** free tier | 16 OK / 1 `429` | `01_narration.py` falls back cleanly to `gemini-3.8-flash-lite-tts` (`5` OK, `0` errors) |
+| Gemini TTS (`gemini-3.8-flash-tts`) | **3 RPM** & **10 RPD** free tier | 20 OK / 2 `429` (film + ceiling) | Respecting `3 RPM` avoids unnecessary fallback to `gemini-3.8-flash-lite-tts` (`7` OK total) |
 | Gemini Image (`gemini-3.1-flash-image`) | 0 free-tier quota (`429`) | 1 probe call | Requires paid billing |
 | Cloudflare Workers AI (`flux-2-klein-4b` / `flux-1-schnell`) | ~10,000 neurons/day free | 41 OK total across v1, v2 & Test 2 | Fit across daily refreshes at \$0 cost; Shots 9 & 10 re-aligned directly on `flux-2-klein-4b` |
 | Kaggle GPU (`T4` / `2× T4`) | ~30 GPU hours/week | ~3–4 GPU minutes (`ACE-Step 1.5`) | Generated 3 × `80s` music tracks (`126.31s` inference + ~2 min setup) via `uv` Python 3.12 |

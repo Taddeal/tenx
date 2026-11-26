@@ -64,6 +64,15 @@ class TestPipelineContracts(unittest.TestCase):
             self.assertTrue(os.path.exists(out_png))
             self.assertGreater(os.path.getsize(out_png), 1000)
 
+    def test_multilanguage_glyph_coverage(self):
+        asm = load_module(os.path.join(PROJECT_ROOT, "pipeline", "05_assemble.py"), "assemble")
+        bench = load_module(os.path.join(PROJECT_ROOT, "pipeline", "benchmark_languages.py"), "benchmark_languages")
+        font = asm.find_ethiopic_font(36)
+        for code in ("am", "om", "ti"):
+            pack = bench.LANGUAGE_PACKS[code]
+            combined = " ".join(pack["beats"].values()) + " " + pack["end_card_proverb"]
+            self.assertEqual(bench.check_font_glyphs(font, combined), [], f"Missing glyphs for {code}")
+
 
 if __name__ == "__main__":
     unittest.main()

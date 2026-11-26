@@ -1,0 +1,71 @@
+{
+  "am": {
+    "2": {
+      "wav_path": "outputs/narration/shot_02.wav",
+      "model": "cached baseline",
+      "duration_s": 5.08,
+      "chars_per_sec": 7.28,
+      "words_per_sec": 1.38
+    },
+    "6": {
+      "wav_path": "outputs/narration/shot_06.wav",
+      "model": "cached baseline",
+      "duration_s": 7.35,
+      "chars_per_sec": 7.07,
+      "words_per_sec": 1.5
+    },
+    "11": {
+      "wav_path": "outputs/narration/shot_11.wav",
+      "model": "cached baseline",
+      "duration_s": 4.99,
+      "chars_per_sec": 7.01,
+      "words_per_sec": 1.4
+    }
+  },
+  "om": {
+    "2": {
+      "wav_path": "outputs/benchmarks/om/shot_02.wav",
+      "model": "gemini-3.8-flash-tts",
+      "duration_s": 5.44,
+      "chars_per_sec": 13.42,
+      "words_per_sec": 1.65
+    },
+    "6": {
+      "wav_path": "outputs/benchmarks/om/shot_06.wav",
+      "model": "gemini-3.8-flash-tts",
+      "duration_s": 6.98,
+      "chars_per_sec": 11.6,
+      "words_per_sec": 1.58
+    },
+    "11": {
+      "wav_path": "outputs/benchmarks/om/shot_11.wav",
+      "model": "gemini-3.8-flash-tts",
+      "duration_s": 3.99,
+      "chars_per_sec": 13.03,
+      "words_per_sec": 1.75
+    }
+  },
+  "ti": {
+    "2": {
+      "wav_path": "outputs/benchmarks/ti/shot_02.wav",
+      "model": "gemini-3.8-flash-tts",
+      "duration_s": 5.77,
+      "chars_per_sec": 6.93,
+      "words_per_sec": 1.73
+    },
+    "6": {
+      "wav_path": "outputs/benchmarks/ti/shot_06.wav",
+      "model": "gemini-3.8-flash-lite-tts",
+      "duration_s": 6.16,
+      "chars_per_sec": 9.25,
+      "words_per_sec": 2.44
+    },
+    "11": {
+      "wav_path": "outputs/benchmarks/ti/shot_11.wav",
+      "model": "gemini-3.8-flash-lite-tts",
+      "duration_s": 4.71,
+      "chars_per_sec": 7.01,
+      "words_per_sec": 1.49
+    }
+  }
+}

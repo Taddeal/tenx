@@ -66,3 +66,10 @@ Real blockers encountered during development and execution, what was tried, and 
 - **What I tried:** Inspected the Kaggle execution log line-by-line (lines 188–252).
 - **What fixed it:** Set `os.environ['MPLBACKEND'] = 'Agg'` at line 1 of `generate_candidates.py` before importing `acestep`, passed `env['MPLBACKEND'] = 'Agg'` with `subprocess.run(..., check=True)` in Cell 3 so errors fail loudly instead of silently, and exported `00_music_candidates.zip` / `00_music_runs.jsonl` cleanly above `ACE-Step-1.5` in Kaggle's Output tree.
 
+## Failure 13: Multi-Language TTS Failures — `3 RPM` Throttle Masking & Afaan Oromo / Tigrinya Phonological Drift (Ceiling Benchmark)
+- **What happened:** Running `pipeline/benchmark_languages.py` across Afaan Oromo (`om`) and Tigrinya (`ti`) surfaced two real failure modes:
+  1. `gemini-3.8-flash-tts` enforces a **3 requests/minute (`RPM`)** free-tier throttle in addition to `10 RPD` (`Shot 06 ti` failed in `1.21s` with `HTTP 429: limit: 3 requests per minute ... Please retry in 46s`).
+  2. Immediate fallback to `gemini-3.8-flash-lite-tts` degraded Tigrinya severely (`Shot 06` accelerated to `2.44 words/s`, dropped syllables in `"ንኣዲሱ"` → `"ናአዱ"`, and slurred `"ዓቢ ሰብኣይ"`), while Afaan Oromo on `gemini-3.8-flash-tts` flattened Qubee `dh` implosives to `d` and read `c` as English/Amharic `"ch"`.
+- **What I tried:** Inspected `runs.jsonl` error payloads, rendered end cards (`ebrima.ttf`: `0` missing glyphs), and listened directly to all 6 generated `.wav` outputs.
+- **What documented/resolved it:** Recorded exact failure boundaries in `EXPERIMENTS.md` (`Experiment 11`) and `outputs/benchmarks/benchmark_summary.json`, proving why production Amharic narration stayed primary and why `3 RPM` `429` responses should wait/retry on the full model rather than downgrading low-resource Ethiopian languages to `flash-lite-tts`.
+

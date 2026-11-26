@@ -23,9 +23,10 @@ python run_pipeline.py
 # Or on Linux/macOS with GNU Make:
 make film
 
-# Optional Phase 1 tools & unit tests:
+# Optional Phase 1 & Ceiling tools & unit tests:
 python pipeline/smoke_test.py
 python run_pipeline.py --radio-cut          # Phase 1: narration + radio_cut.mp4
+python pipeline/benchmark_languages.py     # Ceiling: Afaan Oromo & Tigrinya benchmark vs Amharic
 python -m unittest discover -s tests -v    # Contract & rendering tests
 ```
 

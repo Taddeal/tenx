@@ -12,10 +12,14 @@ venv/
 outputs/**/.cache.json
 outputs/final/_build_tmp/
 outputs/final/_radio_tmp/
+outputs/benchmarks/_tmp/
 
 # Generated outputs (large media files)
 outputs/narration/*.wav
 outputs/narration/*.mp3
+outputs/benchmarks/**/*.wav
+outputs/benchmarks/*.mp4
+outputs/benchmarks/*.png
 outputs/keyframes/*.png
 outputs/keyframes/*.jpg
 outputs/shots/*.mp4
