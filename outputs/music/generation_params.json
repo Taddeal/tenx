@@ -1,0 +1,15 @@
+{
+  "caption": "Ethiopian traditional acoustic instrumental folk underscore, warm and nostalgic, gentle krar lyre melody, subtle masinko fiddle, soft washint flute, sparse unhurried 72 BPM tempo, cinematic film score leaving open space for spoken voiceover, subtle tension in the middle resolving into peaceful warmth, strictly instrumental no vocals",
+  "tags": "instrumental, ethiopian, folk, cinematic, krar, acoustic, emotional, underscore",
+  "duration": 80,
+  "tempo_bpm": 72,
+  "key": "Am",
+  "lyrics": "[Instrumental]",
+  "num_candidates": 3,
+  "seeds": [
+    42,
+    123,
+    777
+  ],
+  "note": "Run notebooks/acestep_music.ipynb on Kaggle, audition 3 seeds, save best as outputs/music/score.wav"
+}

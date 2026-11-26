@@ -1,0 +1,44 @@
+# Secrets
+.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+venv/
+.venv/
+
+# Pipeline cache & temporary build files
+outputs/**/.cache.json
+outputs/final/_build_tmp/
+outputs/final/_radio_tmp/
+
+# Generated outputs (large media files)
+outputs/narration/*.wav
+outputs/narration/*.mp3
+outputs/keyframes/*.png
+outputs/keyframes/*.jpg
+outputs/shots/*.mp4
+outputs/shots/wan/*.mp4
+outputs/music/*.wav
+outputs/music/*.mp3
+outputs/final/*.mp4
+outputs/final/*.srt
+outputs/references/*.png
+outputs/references/*.jpg
+
+# Keep directory structure
+!outputs/narration/.gitkeep
+!outputs/keyframes/.gitkeep
+!outputs/shots/.gitkeep
+!outputs/music/.gitkeep
+!outputs/final/.gitkeep
+!outputs/references/.gitkeep
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/

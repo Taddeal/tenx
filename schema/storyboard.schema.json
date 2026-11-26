@@ -1,0 +1,104 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Heritage Short Storyboard",
+  "description": "Contract between all pipeline stages for the Heritage Short film",
+  "type": "object",
+  "required": ["meta", "style", "characters", "shots", "music"],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "required": ["title", "title_amharic", "logline", "duration_target_seconds", "language", "aspect_ratios"],
+      "properties": {
+        "title": { "type": "string" },
+        "title_amharic": { "type": "string" },
+        "logline": { "type": "string" },
+        "duration_target_seconds": { "type": "array", "items": { "type": "integer" }, "minItems": 2, "maxItems": 2 },
+        "language": { "type": "string" },
+        "aspect_ratios": { "type": "array", "items": { "type": "string", "enum": ["16:9", "9:16"] } }
+      }
+    },
+    "narration": {
+      "type": "object",
+      "properties": {
+        "model": { "type": "string" },
+        "fallback_model": { "type": "string" },
+        "voice": { "type": "string" },
+        "style": { "type": "string" }
+      }
+    },
+    "style": {
+      "type": "object",
+      "required": ["block", "palette", "lighting"],
+      "properties": {
+        "block": { "type": "string", "description": "Style block appended to every image prompt" },
+        "palette": { "type": "string" },
+        "lighting": { "type": "string" },
+        "reference_sheet_prompt": { "type": "string" },
+        "reference_seed": { "type": "integer" }
+      }
+    },
+    "characters": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "description"],
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "description": { "type": "string", "description": "Detailed appearance description for consistency" },
+          "age_range": { "type": "string" }
+        }
+      },
+      "minItems": 1
+    },
+    "shots": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "scene", "duration_seconds", "image_prompt", "motion_prompt", "narration_amharic", "narration_english", "shot_type", "reason"],
+        "properties": {
+          "id": { "type": "integer", "minimum": 1 },
+          "scene": { "type": "string" },
+          "duration_seconds": { "type": "number", "minimum": 2, "maximum": 15 },
+          "shot_type": { "type": "string", "description": "e.g. wide, medium, close-up, extreme close-up" },
+          "image_prompt": { "type": "string", "description": "Prompt for keyframe generation (subject + setting + composition)" },
+          "motion_prompt": { "type": "string", "description": "Prompt for video generation (motion + camera only)" },
+          "narration_amharic": { "type": "string" },
+          "narration_english": { "type": "string", "description": "English translation for subtitles" },
+          "characters_in_shot": { "type": "array", "items": { "type": "string" } },
+          "reason": { "type": "string", "description": "Why this shot exists in the story" },
+          "camera": { "type": "string", "description": "Camera movement description" },
+          "seed": { "type": "integer", "minimum": 0, "description": "Deterministic generation seed" },
+          "is_end_card": { "type": "boolean" },
+          "transition": { "type": "string", "enum": ["cut", "crossfade", "fade_to_black", "dissolve"], "default": "cut" },
+          "music_cue": { "type": "string", "description": "What the music should do at this point" }
+        }
+      },
+      "minItems": 6,
+      "maxItems": 15
+    },
+    "music": {
+      "type": "object",
+      "required": ["style", "mood", "instruments", "tempo_bpm", "duration_seconds"],
+      "properties": {
+        "style": { "type": "string" },
+        "mood": { "type": "string" },
+        "instruments": { "type": "string" },
+        "tempo_bpm": { "type": "integer", "minimum": 40, "maximum": 200 },
+        "key": { "type": "string" },
+        "duration_seconds": { "type": "integer" },
+        "caption": { "type": "string", "description": "Full caption for ACE-Step generation" },
+        "tags": { "type": "string" }
+      }
+    },
+    "end_card": {
+      "type": "object",
+      "properties": {
+        "text_amharic": { "type": "string" },
+        "text_english": { "type": "string" },
+        "ai_disclosure": { "type": "string" },
+        "duration_seconds": { "type": "number" }
+      }
+    }
+  }
+}
